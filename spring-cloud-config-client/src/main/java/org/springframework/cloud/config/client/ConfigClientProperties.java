@@ -54,7 +54,7 @@ public class ConfigClientProperties {
 	/**
 	 * Name of application used to fetch remote properties.
 	 */
-	@Value("${spring.application.name:application}")
+	//@Value("${spring.application.name:application}")
 	private String name;
 
 	/**

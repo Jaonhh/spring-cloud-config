@@ -82,17 +82,17 @@ public class ConfigServicePropertySourceLocator implements PropertySourceLocator
 		String errorBody = null;
 		logger.info("Fetching config from server at: " + properties.getRawUri());
 		try {
-			String[] labels = new String[] { "" };
+			String[] names = new String[] { "" };
 			if (StringUtils.hasText(properties.getLabel())) {
-				labels = StringUtils.commaDelimitedListToStringArray(properties.getLabel());
+				names = StringUtils.commaDelimitedListToStringArray(properties.getName());
 			}
 
 			String state = ConfigClientStateHolder.getState();
 
 			// Try all the labels until one works
-			for (String label : labels) {
+			for (String name : names) {
 				Environment result = getRemoteEnvironment(restTemplate,
-						properties, label.trim(), state);
+						properties, name.trim(), state);
 				if (result != null) {
 					log(result);
 
@@ -112,9 +112,10 @@ public class ConfigServicePropertySourceLocator implements PropertySourceLocator
 						putValue(map, "config.client.version", result.getVersion());
 						composite.addFirstPropertySource(new MapPropertySource("configClient", map));
 					}
-					return composite;
+
 				}
 			}
+			return composite;
 		}
 		catch (HttpServerErrorException e) {
 			error = e;
@@ -167,9 +168,9 @@ public class ConfigServicePropertySourceLocator implements PropertySourceLocator
 	}
 
 	private Environment getRemoteEnvironment(RestTemplate restTemplate, ConfigClientProperties properties,
-											 String label, String state) {
+											 String name, String state) {
 		String path = "/{name}/{profile}";
-		String name = properties.getName();
+		String label = properties.getLabel();
 		String profile = properties.getProfile();
 		String token = properties.getToken();
 		String uri = properties.getRawUri();
